@@ -1,10 +1,11 @@
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+    <div>登陆组件</div>
 </template>
 
 <script>
+export default {
+
+}
 
 </script>
 
