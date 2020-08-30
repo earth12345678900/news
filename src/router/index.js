@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import User from '../views/User.vue'
+import UserEdit from '../views/UserEdit.vue'
 
 Vue.use(VueRouter)
 
@@ -26,6 +27,11 @@ const routes = [
     path: '/user',
     component: User,
     name: 'user'
+  },
+  {
+    path: '/user-edit',
+    component: UserEdit,
+    name: 'user-edit'
   }
 ]
 
@@ -46,7 +52,8 @@ router.beforeEach((to, from, next) => {
   //   next()
   // }
   const token = localStorage.getItem('token')
-  if (to.name !== 'user' || token) {
+  const authUrls = ['/user', '/user-edit']
+  if (!authUrls.includes(to.path) || token) {
     next()
   } else {
     router.push('/login')
