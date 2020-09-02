@@ -4,6 +4,7 @@
       <!-- 头像 -->
       <div class="avatar">
           <img :src="$axios.defaults.baseURL + user.head_img" alt="">
+          <van-uploader :after-read="afterRead" />
       </div>
       <!-- 导航栏 -->
       <hm-nav @click='showNickName'>
@@ -21,7 +22,7 @@
 
       <!-- 渲染dialog组件 修改昵称-->
       <van-dialog v-model="isShowNickName" title="编辑昵称" show-cancel-button @confirm='updateNickName'>
-        <van-field v-model="nickname" placeholder="请输入用户名" />
+        <van-field v-model="nickname" ref="nickname" placeholder="请输入用户名" />
       </van-dialog>
 
       <!-- 渲染dialog组件 修改密码-->
@@ -45,11 +46,31 @@
             </van-cell-group>
         </van-radio-group>
       </van-dialog>
+      <!-- 裁剪的模态框 -->
+      <div class="mask" v-show="isShowMask">
+        <van-button type="primary" class="crop" @click='crop'>裁剪</van-button>
+        <van-button type="danger" class="cancel" @click='isShowMask = false'>取消</van-button>
+        <VueCropper
+        ref="crop"
+        :img='img'
+        autoCrop
+        autoCropWidth='100'
+        autoCropHeight='100'
+        fixed
+        ></VueCropper>
+      </div>
   </div>
 </template>
 
 <script>
+// 引入组件
+import { VueCropper } from 'vue-cropper'
+
 export default {
+  // 局部注册组件
+  components: {
+    VueCropper
+  },
   data () {
     return {
       user: '',
@@ -58,7 +79,9 @@ export default {
       isShowPassword: false,
       password: '',
       isShowGender: false,
-      gender: 0
+      gender: 0,
+      isShowMask: false,
+      img: ''
     }
   },
   created () {
@@ -87,9 +110,13 @@ export default {
       }
     },
 
-    showNickName () {
+    async showNickName () {
       this.isShowNickName = true
       this.nickname = this.user.nickname
+      // 等待DOM更新
+      await this.$nextTick()
+      // 自动获取焦点
+      this.$refs.nickname.focus()
     },
 
     async updateNickName () {
@@ -117,6 +144,52 @@ export default {
     },
     async updateGender () {
       this.updateUser({ gender: this.gender })
+    },
+    isImg (name) {
+      if (name.endsWith('.gif') || name.endsWith('.jpg') || name.endsWith('.png') || name.endsWith('.jpeg')) {
+        return true
+      } else {
+        return false
+      }
+    },
+    // 上传头像的方法
+    afterRead (file) {
+      // 此时可以自行将文件上传至服务器
+      // console.log(file)
+      if (!this.isImg(file.file.name)) {
+        return this.$toast.fail('请上传正确的文件格式')
+      }
+      if (file.file.size >= 1024 * 1024) {
+        return this.$toast.fail('文件太大')
+      }
+      this.isShowMask = true
+      // 裁剪要给base64格式的图片
+      this.img = file.content
+      // ajax请求上传文件得是一个formdata对象
+      // const fd = new FormData()
+      // fd.append('file', file.file)
+      // const res = await this.$axios.post('/upload', fd)
+      // const { statusCode, data } = res.data
+      // if (statusCode === 200) {
+      //   this.updateUser({
+      //     head_img: data.url
+      //   })
+      // }
+    },
+    crop () {
+      this.$refs.crop.getCropBlob(async blob => {
+        // console.log(blob)
+        const fd = new FormData()
+        fd.append('file', blob)
+        const res = await this.$axios.post('/upload', fd)
+        const { statusCode, data } = res.data
+        if (statusCode === 200) {
+          this.updateUser({
+            head_img: data.url
+          })
+        }
+        this.isShowMask = false
+      })
     }
   }
 }
@@ -126,10 +199,20 @@ export default {
 .avatar {
     padding: 40px 0;
     text-align: center;
+    position: relative;
     img {
         width: 100px;
         height: 100px;
         border-radius: 50%;
+    }
+    .van-uploader {
+      position: absolute;
+      left: 50%;
+      top: 40px;
+      transform: translate(-50%);
+      width: 100px;
+      height: 100px;
+      opacity: 0;
     }
 }
 // 深度作用选择器
@@ -138,6 +221,23 @@ export default {
     .van-field {
         border: 1px solid #ccc;
     }
+}
+.mask {
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  .crop,
+  .cancel {
+    position: fixed;
+    top: 0;
+    z-index: 1;
+  }
+  .cancel {
+    right: 0;
+  }
 }
 
 </style>

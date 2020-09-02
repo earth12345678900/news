@@ -20,15 +20,15 @@
       </div>
 
       <!-- 导航条 -->
-      <hm-nav to="/follow">
+      <hm-nav to="/myfollow">
         <template>我的关注</template>
         <template #content>关注的内容</template>
       </hm-nav>
-      <hm-nav>
+      <hm-nav to="/mycomment">
         <template>我的跟帖</template>
         <template #content>跟帖回复</template>
       </hm-nav>
-      <hm-nav>
+      <hm-nav to="/mystar">
         <template>我的收藏</template>
         <template #content>文章/视频</template>
       </hm-nav>
