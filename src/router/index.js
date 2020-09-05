@@ -1,13 +1,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
-import User from '../views/User.vue'
-import UserEdit from '../views/UserEdit.vue'
-import MyFollow from '../views/MyFollow.vue'
-import MyComment from '../views/MyComment.vue'
-import MyStar from '../views/MyStar.vue'
-
+import Login from '../views/user/Login.vue'
+import Register from '../views/user/Register.vue'
+import User from '../views/user/User.vue'
+import UserEdit from '../views/user/UserEdit.vue'
+import MyFollow from '../views/user/MyFollow.vue'
+import MyComment from '../views/user/MyComment.vue'
+import MyStar from '../views/user/MyStar.vue'
+import Index from '../views/news/Index.vue'
+import Mange from '../views/news/Mange.vue'
+import PostDetail from '../views/news/PostDetail.vue'
 Vue.use(VueRouter)
 
 const originalPush = VueRouter.prototype.push
@@ -50,6 +52,22 @@ const routes = [
     path: '/mystar',
     component: MyStar,
     name: 'mystar'
+  },
+  {
+    path: '/',
+    component: Index,
+    name: 'index'
+  },
+  {
+    path: '/mange',
+    component: Mange,
+    name: 'mange'
+  },
+  {
+    // 动态路由
+    path: '/post-detail/:id',
+    component: PostDetail,
+    name: 'postdetail'
   }
 ]
 

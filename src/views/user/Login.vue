@@ -72,8 +72,13 @@ export default {
         // 保存token
         localStorage.setItem('token', data.token)
         localStorage.setItem('userId', data.user.id)
-        // 跳转到个人中心
-        this.$router.push('/user')
+        // 如果有back
+        if (this.$route.query.back) {
+          this.$router.back()
+        } else {
+          // 跳转到个人中心
+          this.$router.push('/user')
+        }
       } else {
         this.$toast.fail('登陆失败')
       }
