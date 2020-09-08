@@ -38,12 +38,18 @@
     <div class="comment-list">
       <h3>精彩跟帖</h3>
       <!-- 父传子 -->
-      <hm-comment :comment='comment' v-for="comment in commentList" :key="comment.id"></hm-comment>
+      <hm-comment :comment='comment' v-for="comment in commentList" :key="comment.id" @reply='onReply'></hm-comment>
+    </div>
+
+    <!-- 底部评论框 -->
+    <div class="footer-textarea" v-if="isShowTextarea">
+      <textarea @blur="onBlur" :placeholder="'回复：' + nickname" ref="textarea" v-model="content"></textarea>
+      <van-button type="danger" @click="publish">发送</van-button>
     </div>
     <!-- footer -->
-    <div class="footer">
+    <div class="footer-input" v-else>
       <div class="search">
-        <input type="text" placeholder="回复">
+        <input type="text" placeholder="回复"  @focus="onFocus">
       </div>
       <span class="iconfont iconpinglun-"><i>20</i></span>
       <span class="iconfont iconshoucang" :class="{now: post.has_star}" @click="star"></span>
@@ -60,13 +66,26 @@ export default {
         // 不加user nickname会报错
         user: {}
       },
-      commentList: []
+      commentList: [],
+      isShowTextarea: false,
+      content: '',
+      nickname: '',
+      // 回复的id
+      replyId: ''
     }
   },
   created () {
     this.getInfo()
     // 获取文章评论列表
     this.getCommentList()
+
+    // 给bus注册自定义事件
+    this.$bus.$on('reply', this.onReply)
+  },
+  destroyed () {
+    // 移除$bus的自定义事件(三种传参方式)
+    // 移除bus上的reply事件 对应的onReply事件
+    this.$bus.$off('reply', this.onReply)
   },
   methods: {
     nologin () {
@@ -152,6 +171,46 @@ export default {
       if (statusCode === 200) {
         this.commentList = data
         console.log(this.commentList)
+      }
+    },
+    async onFocus () {
+      this.isShowTextarea = true
+      // 等待dom更新
+      await this.$nextTick()
+      this.$refs.textarea.focus()
+    },
+    async publish () {
+      const res = await this.$axios.post(`post_comment/${this.post.id}`, {
+        content: this.content,
+        parent_id: this.replyId
+      })
+      // console.log(res)
+      const { statusCode, message } = res.data
+      if (statusCode === 200) {
+        this.$toast.success(message)
+        this.getCommentList()
+        this.content = ''
+        this.replyId = ''
+        this.nickname = ''
+        this.isShowTextarea = false
+      }
+    },
+    // 回复评论
+    async onReply (id, nickname) {
+      this.isShowTextarea = true
+      await this.$nextTick()
+      // 自动获取焦点
+      this.$refs.textarea.focus()
+      // 回显nickname
+      this.nickname = '@' + nickname
+      this.replyId = id
+    },
+    // 失去焦点事件
+    onBlur () {
+      if (!this.content) {
+        this.isShowTextarea = false
+        this.replyId = ''
+        this.nickname = ''
       }
     }
   }
@@ -254,7 +313,7 @@ export default {
     padding: 10px 0;
   }
 }
-.footer {
+.footer-input {
   background-color: #fff;
   width: 100%;
   height: 50px;
@@ -298,6 +357,28 @@ export default {
       padding-left: 20px;
       padding: 3px;
     }
+  }
+}
+.footer-textarea {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  position: fixed;
+  z-index: 999;
+  bottom: 0;
+  padding: 10px;
+  align-items: flex-end;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+  justify-content: space-around;
+  textarea {
+    width: 260px;
+    height: 80px;
+    background-color: #ccc;
+    border-radius: 5px;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
   }
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <hm-floor :comment='comment.parent' v-if="comment.parent"></hm-floor>
+    <hm-floor :count='count - 1' :comment='comment.parent' v-if="comment.parent"></hm-floor>
     <div class="hm-floor">
       <div class="title">
-        <div class="left">{{comment.user.nickname}}</div>
+        <div class="left">{{count}}.{{comment.user.nickname}}</div>
         <div class="center">{{comment.creat_date | now}}</div>
-        <div class="right">回复</div>
+        <div class="right" @click="reply">回复</div>
       </div>
       <div class="content">{{comment.content}}</div>
     </div>
@@ -15,15 +15,21 @@
 <script>
 export default {
   // 递归组件自己渲染自己 必须要有name
-  name: 'hm-floor',
+  // name: 'hm-floor',
   props: {
-    comment: Object
+    comment: Object,
+    count: Number
   },
   data: function () {
     return {}
   },
   created () {},
-  methods: {}
+  methods: {
+    reply () {
+      // this.$emit('reply', this.comment.id, this.comment.user.nickname)
+      this.$bus.$emit('reply', this.comment.id, this.comment.user.nickname)
+    }
+  }
 }
 </script>
 

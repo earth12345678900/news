@@ -10,6 +10,7 @@ import MyStar from '../views/user/MyStar.vue'
 import Index from '../views/news/Index.vue'
 import Mange from '../views/news/Mange.vue'
 import PostDetail from '../views/news/PostDetail.vue'
+import Search from '../views/news/Search.vue'
 Vue.use(VueRouter)
 
 const originalPush = VueRouter.prototype.push
@@ -68,6 +69,12 @@ const routes = [
     path: '/post-detail/:id',
     component: PostDetail,
     name: 'postdetail'
+  },
+  {
+    // 动态路由
+    path: '/search',
+    component: Search,
+    name: 'search'
   }
 ]
 

@@ -5,7 +5,7 @@
         <span class="iconfont iconnew"></span>
       </div>
       <div class="search">
-        <div class="search-box">
+        <div class="search-box" @click="$router.push('/search')">
           <span class="iconfont iconsearch"></span>
           <span>搜索新闻</span>
         </div>
@@ -42,6 +42,8 @@
 </template>
 <script>
 export default {
+  // 用于页面缓存(类似路由)
+  name: 'index',
   data () {
     return {
       active: 0,
