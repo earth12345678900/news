@@ -2,7 +2,7 @@
   <div class="hm-comment">
       <div class="title">
           <div class="left">
-              <img :src="$axios.defaults.baseURL + comment.user.head_img" alt="">
+              <img :src="'/api' + comment.user.head_img" alt="">
           </div>
           <div class="center">
               <p>{{comment.user.nickname}}</p>

@@ -2,7 +2,7 @@
   <div class="user">
       <div class="header" @click="$router.push('/user-edit')">
           <div class="avatar">
-              <img :src="$axios.defaults.baseURL + user.head_img" alt="">
+              <img :src="'/api' + user.head_img" alt="">
           </div>
           <div class="info">
               <div class="name">

@@ -4,7 +4,7 @@
       <div class="list">
           <div class="item" v-for="item in list" :key="item.id">
               <div class="left">
-                  <img :src="$axios.defaults.baseURL + item.head_img" alt="">
+                  <img :src="'/api' + item.head_img" alt="">
               </div>
               <div class="center">
                   <p>{{item.nickname}}</p>

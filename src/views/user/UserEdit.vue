@@ -3,7 +3,7 @@
       <hm-header>编辑资料</hm-header>
       <!-- 头像 -->
       <div class="avatar">
-          <img :src="$axios.defaults.baseURL + user.head_img" alt="">
+          <img :src="'/api' + user.head_img" alt="">
           <van-uploader :after-read="afterRead" />
       </div>
       <!-- 导航栏 -->

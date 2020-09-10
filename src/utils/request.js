@@ -9,6 +9,7 @@ import { Toast } from 'vant'
 Vue.prototype.$axios = axios
 // 给axios配置默认基准地址
 axios.defaults.baseURL = 'http://localhost:3000'
+// axios.defaults.baseURL = '/api'
 // const URL = 'http://localhost:3000'
 // axios.defaults.baseURL = URL
 // Vue.prototype.$base = URL
